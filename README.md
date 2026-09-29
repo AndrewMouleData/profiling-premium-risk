@@ -26,14 +26,66 @@ with greater insurer liability. **Proxy** refers to the resulting
 frequency × severity measure, used as a practical stand-in for fuller
 actuarial assessment of relative third-party motor insurance risk.
 
-### Business Task
+## Project Highlights
+
+- Built an end-to-end SQL/R analytics pipeline using UK STATS19
+  collision, vehicle, and casualty data to investigate whether open road
+  safety records can support insurance-relevant relative-risk analysis.
+- Designed a layered PostgreSQL architecture across raw, staging, and
+  mart schemas, separating source ingestion, type casting, relational
+  validation, transformation, and analysis-ready profile construction.
+- Developed a transparent frequency × severity proxy,
+  `risk_proxy_score`, combining collision-involved vehicle frequency
+  with weighted casualty severity to compare relative risk across
+  grouped vehicle-characteristic profiles.
+- Applied explicit validation and scoping logic to improve
+  interpretability, including transfer checks in R, profile-count
+  thresholding, out-of-scope vehicle exclusions, and reporting filters
+  for weakly defined records.
+- Produced six README-facing visual outputs to communicate
+  frequency/severity patterns, ranked high-risk profiles, proxy-score
+  distribution, grouped vehicle-type contribution, profile depth, and
+  coverage retained through scoping.
+- Interpreted findings through a commercial third-party motor insurance
+  lens, distinguishing between risk-signalling, pricing-review support,
+  and the limits of collision-only open data.
+- Clearly identified where confidence varies across the framework,
+  particularly around lower-count profiles, incomplete
+  vehicle-characteristic detail, lack of exposure denominators, and
+  judgement-led severity assumptions.
+- Proposed practical next steps for strengthening the framework,
+  including alternative grouping structures, expanded STATS19 features,
+  open-data exposure enrichment, severity-weight testing,
+  reporting-window sensitivity checks, and granularity validation.
+
+## Business Task
 
 Assess whether open UK road safety data can be used to estimate relative
 risk across vehicle characteristics, and, if so, how and to what extent
 those estimates can support third-party motor insurance premium-pricing
 decisions.
 
-### Context and Scope
+## Skills Demonstrated
+
+- SQL-led layered data architecture, using raw, staging, and mart
+  schemas to transform STATS19 source files into analysis-ready risk
+  profiles
+- PostgreSQL data ingestion, type casting, relational key enforcement,
+  and transformation logic
+- R-based validation, exploratory analysis, analytical scoping, and
+  visualisation
+- Business problem framing and scope management for a commercially
+  relevant insurance-risk use case
+- Proxy metric design, including a transparent frequency × severity risk
+  score
+- Data quality assessment, thresholding, and evidence-strength
+  evaluation
+- Analytical interpretation of confidence, coverage, completeness, and
+  limitations
+- Clear communication of technical findings for decision-support use
+- Git/GitHub project documentation and reproducible workflow design
+
+## Context and Scope
 
 The analysis is explicitly framed around third-party motor insurance,
 which exists to provide financial cover for people injured as a result
@@ -59,7 +111,7 @@ what STATS19 can provide.
 - Causal inference across vehicle, driver, or environmental factors
 - Driver behaviour, demographics, or fault attribution
 
-### Project Structure
+## Project Structure
 
 - **sql/**  
   SQL scripts for raw data ingestion, staging, mart construction, and
@@ -85,7 +137,7 @@ what STATS19 can provide.
   Supporting documentation covering methodology, assumptions, and
   decision rationale.
 
-### Data Architecture
+## Data Architecture
 
 The project follows a layered relational structure:
 
@@ -120,7 +172,7 @@ This layer:
 visualisation, and interpretation. It does not recalculate the core mart
 metrics.*
 
-### Analytical Framework
+## Analytical Framework
 
 This project uses a frequency × severity framework to compare the
 relative third-party injury risk associated with broad vehicle profiles.
@@ -145,7 +197,7 @@ they do. Separating frequency from severity makes that difference
 visible, which allows for greater clarity in the insights this analysis
 produces.
 
-### Risk Metric Construction
+## Risk Metric Construction
 
 The frequency × severity framework is implemented in the mart layer
 through a set of deliberately ordered metric calculations.
@@ -184,7 +236,7 @@ severity construction and profile-level risk comparison, while keeping
 the final mart output directly interpretable for downstream validation,
 analysis, and visualisation in R.
 
-### Validation Approach
+## Validation Approach
 
 Before any exploratory analysis or visualisation takes place, the final
 mart output is validated in R to confirm that it remains structurally
@@ -217,7 +269,7 @@ scoping decisions, and visual outputs easier to trust, because they are
 working from an output that has already been tested for internal
 consistency.
 
-### Scoping Decisions
+## Scoping Decisions
 
 Exploratory analysis was first carried out on the full unscoped mart
 output before any analytical filtering was applied. This allowed profile
@@ -231,7 +283,7 @@ support meaningful reporting. To preserve the integrity of the core
 metrics, all scoping takes place after metric construction rather than
 before it.
 
-### Visual Outputs
+## Visual Outputs
 
 The final visualisation stage translates the scoped analytical output
 into a small set of README-facing figures designed to support
@@ -255,7 +307,7 @@ the reporting subset, while the coverage summary shows how much of the
 full collision-involved vehicle universe remains represented after each
 scoping stage.
 
-### Requirements
+## Requirements
 
 This project is carried out using PostgreSQL and R within a simple
 end-to-end analytics stack. It assumes basic command-line familiarity
@@ -286,7 +338,7 @@ your local environment:*
 
 `install.packages(c("tidyverse", "DBI", "RPostgres", "knitr", "rmarkdown"))`
 
-### Reproducing the Analysis
+## Reproducing the Analysis
 
 To reproduce the analysis locally, follow the steps below.
 
@@ -598,22 +650,21 @@ vehicle-characteristic combinations removed from the final analytical
 landscape despite being valid records within STATS19. Consequently, the
 thresholded dataset is better suited to stable comparison, but it is no
 longer a complete representation of every vehicle profile observed
-within the collision environment.
-
-The subsequent comparison within `Profiles retained` is between the
-thresholded dataset and the final reporting subset. Unlike the minimum
-profile-count threshold, this reduction is not driven by insufficient
-collision representation. Every profile removed at this stage has
-already demonstrated enough collision presence to survive thresholding.
-The reporting-level undefined-profile filter exists to ensure that
-retained profiles contain enough vehicle-characteristic detail to
-support meaningful interpretation: profiles are removed where
-propulsion, engine capacity, and vehicle age are all simultaneously
-unknown or undefined. Whilst the number of profiles removed at this
-stage is comparatively small at just 17, those excluded profiles span
-all in-scope `vehicle_type` categories. This indicates that incomplete
-characteristic recording is a broad feature of STATS19 rather than an
-issue confined to a small subset of vehicle types.
+within the collision environment. The subsequent comparison within
+`Profiles retained` is between the thresholded dataset and the final
+reporting subset. Unlike the minimum profile-count threshold, this
+reduction is not driven by insufficient collision representation. Every
+profile removed at this stage has already demonstrated enough collision
+presence to survive thresholding. The reporting-level undefined-profile
+filter exists to ensure that retained profiles contain enough
+vehicle-characteristic detail to support meaningful interpretation:
+profiles are removed where propulsion, engine capacity, and vehicle age
+are all simultaneously unknown or undefined. Whilst the number of
+profiles removed at this stage is comparatively small at just 17, those
+excluded profiles span all in-scope `vehicle_type` categories. This
+indicates that incomplete characteristic recording is a broad feature of
+STATS19 rather than an issue confined to a small subset of vehicle
+types.
 
 The second panel of Figure 6 examines `Vehicle coverage (%)`, shifting
 attention from the number of grouped profiles retained to the proportion

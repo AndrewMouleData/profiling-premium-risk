@@ -12,11 +12,32 @@ The result is an exploration of how publicly available UK road collision data ca
 **Defining heuristic and proxy:** 
 In this project, **heuristic** refers to the simplified, rule-based methodology used to approximate risk where richer actuarial claims, exposure, and pricing data are unavailable. In practice, that includes assigning fixed weights to casualty severity levels as a reasonable stand-in for likely third-party payout severity, on the assumption that more severe injuries are generally associated with greater insurer liability. **Proxy** refers to the resulting frequency × severity measure, used as a practical stand-in for fuller actuarial assessment of relative third-party motor insurance risk.
 
-### Business Task
+## Project Highlights  
+- Built an end-to-end SQL/R analytics pipeline using UK STATS19 collision, vehicle, and casualty data to investigate whether open road safety records can support insurance-relevant relative-risk analysis.
+- Designed a layered PostgreSQL architecture across raw, staging, and mart schemas, separating source ingestion, type casting, relational validation, transformation, and analysis-ready profile construction.
+- Developed a transparent frequency × severity proxy, `risk_proxy_score`, combining collision-involved vehicle frequency with weighted casualty severity to compare relative risk across grouped vehicle-characteristic profiles.
+- Applied explicit validation and scoping logic to improve interpretability, including transfer checks in R, profile-count thresholding, out-of-scope vehicle exclusions, and reporting filters for weakly defined records.
+- Produced six README-facing visual outputs to communicate frequency/severity patterns, ranked high-risk profiles, proxy-score distribution, grouped vehicle-type contribution, profile depth, and coverage retained through scoping.
+- Interpreted findings through a commercial third-party motor insurance lens, distinguishing between risk-signalling, pricing-review support, and the limits of collision-only open data.
+- Clearly identified where confidence varies across the framework, particularly around lower-count profiles, incomplete vehicle-characteristic detail, lack of exposure denominators, and judgement-led severity assumptions.
+- Proposed practical next steps to strengthen the framework, including open-data exposure enrichment, expanded STATS19 segmentation, severity-weight testing, reporting-window checks, and granularity validation.
+
+## Business Task
 
 Assess whether open UK road safety data can be used to estimate relative risk across vehicle characteristics, and, if so, how and to what extent those estimates can support third-party motor insurance premium-pricing decisions.
 
-### Context and Scope
+## Skills Demonstrated  
+- SQL-led layered data architecture, using raw, staging, and mart schemas to transform STATS19 source files into analysis-ready risk profiles
+- PostgreSQL data ingestion, type casting, relational key enforcement, and transformation logic
+- R-based validation, exploratory analysis, analytical scoping, and visualisation
+- Business problem framing and scope management for a commercially relevant insurance-risk use case
+- Proxy metric design, including a transparent frequency × severity risk score
+- Data quality assessment, thresholding, and evidence-strength evaluation
+- Analytical interpretation of confidence, coverage, completeness, and limitations
+- Clear communication of technical findings for decision-support use
+- Git/GitHub project documentation and reproducible workflow design
+
+## Context and Scope
 
 The analysis is explicitly framed around third-party motor insurance, which exists to provide financial cover for people injured as a result of an insured driver’s actions. Within that context, injury severity and collision frequency are treated as the key drivers of relative financial exposure, which is why their combination is used here as a proxy for third-party liability risk.
 
@@ -30,7 +51,7 @@ To maintain a clear purpose and disciplined scope, the project examines collisio
 - Causal inference across vehicle, driver, or environmental factors
 - Driver behaviour, demographics, or fault attribution
 
-### Project Structure
+## Project Structure
 
 - **sql/**  
   SQL scripts for raw data ingestion, staging, mart construction, and core risk metric creation from STATS19 data.
@@ -48,7 +69,7 @@ To maintain a clear purpose and disciplined scope, the project examines collisio
 - **docs/**  
   Supporting documentation covering methodology, assumptions, and decision rationale.
 
-### Data Architecture 
+## Data Architecture 
 
 The project follows a layered relational structure:
 
@@ -73,7 +94,7 @@ This layer:
 *All core frequency and severity metrics are calculated in SQL.*  
 *R is used for independent validation, exploratory analysis, scoping, visualisation, and interpretation. It does not recalculate the core mart metrics.*
 
-### Analytical Framework
+## Analytical Framework
 
 This project uses a frequency × severity framework to compare the relative third-party injury risk associated with broad vehicle profiles. The logic is intentionally simple. If a vehicle profile appears more often in the collision dataset, it contributes more to the overall risk landscape. If collisions involving that profile also tend to produce more severe casualty outcomes, its relative risk increases further.
 
@@ -81,7 +102,7 @@ The framework therefore combines two distinct signals. The first is frequency, w
 
 A key advantage of this structure is that it preserves the distinction between different kinds of high-risk profile. Some profiles may rank highly because they appear frequently in the collision data. Others may appear less often, but generate materially worse injury outcomes when they do. Separating frequency from severity makes that difference visible, which allows for greater clarity in the insights this analysis produces.
 
-### Risk Metric Construction
+## Risk Metric Construction
 
 The frequency × severity framework is implemented in the mart layer through a set of deliberately ordered metric calculations.
 
@@ -107,7 +128,7 @@ At that profile level, the mart produces the project’s core metrics:
 
 This structure preserves a clear distinction between vehicle-level severity construction and profile-level risk comparison, while keeping the final mart output directly interpretable for downstream validation, analysis, and visualisation in R.
 
-### Validation Approach
+## Validation Approach
 
 Before any exploratory analysis or visualisation takes place, the final mart output is validated in R to confirm that it remains structurally sound and mathematically consistent after SQL transformation and transfer into the R environment.
 
@@ -125,13 +146,13 @@ Where calculated values are compared, checks are applied with a small floating p
 
 By separating metric construction in SQL from validation in R, the project introduces an independent cross-layer check before interpretation begins. That makes the downstream exploratory analysis, scoping decisions, and visual outputs easier to trust, because they are working from an output that has already been tested for internal consistency.
 
-### Scoping Decisions
+## Scoping Decisions
 
 Exploratory analysis was first carried out on the full unscoped mart output before any analytical filtering was applied. This allowed profile stability, coverage, and interpretability to be assessed across the complete collision-involved vehicle universe.
 
 The scoping rules introduced later in the pipeline were informed by those observations, chiefly to address very low-count profiles, out-of-scope vehicle types, and weakly defined groups that could not support meaningful reporting. To preserve the integrity of the core metrics, all scoping takes place after metric construction rather than before it.
 
-### Visual Outputs
+## Visual Outputs
 
 The final visualisation stage translates the scoped analytical output into a small set of README-facing figures designed to support interpretation rather than extend the modelling logic. The charts use consistent mappings between variables and visual encodings to support direct comparison across views.
 
@@ -146,7 +167,7 @@ These figures focus on the reporting subset and are used to show the project fro
 
 Together, they provide a concise view of both the analytical results and the trade-offs introduced by scoping. Interpretive charts are built from the reporting subset, while the coverage summary shows how much of the full collision-involved vehicle universe remains represented after each scoping stage.
 
-### Requirements
+## Requirements
 
 This project is carried out using PostgreSQL and R within a simple end-to-end analytics stack. It assumes basic command-line familiarity for raw data ingestion, as the PostgreSQL client (`psql`) is used to load local CSV files via client-side operations that sit outside the database server.
 
@@ -171,7 +192,7 @@ This project is carried out using PostgreSQL and R within a simple end-to-end an
 
 `install.packages(c("tidyverse", "DBI", "RPostgres", "knitr", "rmarkdown"))`
 
-### Reproducing the Analysis
+## Reproducing the Analysis
 
 To reproduce the analysis locally, follow the steps below.
 
@@ -270,7 +291,6 @@ This does not invalidate the proxy approach, but it does mark the boundary of wh
 Figure 6 illustrates how grouped-profile and individual-vehicle coverage change across the final stages of the analytical pipeline, assessing the extent to which the STATS19-derived landscape is retained through the application of the minimum profile-count threshold and reporting-level undefined-profile filter. This is an important consideration for the business task because the usefulness of STATS19 as a risk-landscaping dataset depends not only on the profiles it can generate, but on how much of the underlying collision landscape remains once stability and interpretability benchmarks are enforced. The first panel examines `Profiles retained`, showing how much of the grouped-profile landscape survives each stage of the pipeline. The second examines `Vehicle coverage (%)`, showing how much of the collision-involved vehicle population remains represented. Together, these measures allow for the trade-off between analytical robustness and landscape completeness to be evaluated directly.
 
 In `Profiles retained`, Figure 6 examines how grouped vehicle profiles are reduced across the analytical pipeline. The first comparison is between all in-scope grouped profiles and the subset retained after application of the minimum profile-count threshold. As discussed in Section 5, this threshold exists to improve profile-level stability by excluding profiles with limited collision representation. Figure 6 shows that this comes at a substantial cost to profile coverage, with many vehicle-characteristic combinations removed from the final analytical landscape despite being valid records within STATS19. Consequently, the thresholded dataset is better suited to stable comparison, but it is no longer a complete representation of every vehicle profile observed within the collision environment. 
-
 The subsequent comparison within `Profiles retained` is between the thresholded dataset and the final reporting subset. Unlike the minimum profile-count threshold, this reduction is not driven by insufficient collision representation. Every profile removed at this stage has already demonstrated enough collision presence to survive thresholding. The reporting-level undefined-profile filter exists to ensure that retained profiles contain enough vehicle-characteristic detail to support meaningful interpretation: profiles are removed where propulsion, engine capacity, and vehicle age are all simultaneously unknown or undefined. Whilst the number of profiles removed at this stage is comparatively small at just 17, those excluded profiles span all in-scope `vehicle_type` categories. This indicates that incomplete characteristic recording is a broad feature of STATS19 rather than an issue confined to a small subset of vehicle types.
 
 The second panel of Figure 6 examines `Vehicle coverage (%)`, shifting attention from the number of grouped profiles retained to the proportion of collision-involved vehicles they represent. Here, a markedly different pattern emerges. Whilst application of the minimum profile-count threshold removes a substantial number of grouped profiles, the corresponding reduction in vehicle coverage is comparatively small, indicating that the vast majority of collision-involved vehicles remain concentrated within a relatively small set of higher-volume profiles. Although the thresholded dataset is no longer a complete representation of the collision landscape, it continues to retain the vast majority of collision-involved vehicles. This suggests that, despite the loss of numerous lower-representation profile combinations, much of the mainstream collision environment remains visible within the final analytical landscape.
