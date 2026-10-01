@@ -12,6 +12,7 @@ outputs/*
 .Rhistory
 .RData
 .Rproj.user/
+*.Rproj
 *.rds
 *.fst
 .Renviron
