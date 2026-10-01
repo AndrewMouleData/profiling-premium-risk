@@ -1,7 +1,7 @@
 /*
 03_create_mart_vehicle_dimensions.sql
 
-Dimension prep layer for the predicting_premium_risk mart schema.
+Dimension prep layer for the profiling_premium_risk mart schema.
 
 Purpose:
 - Enrich mart.all_vehicles_with_severity_2015_2024 with analysis-ready dimensions.

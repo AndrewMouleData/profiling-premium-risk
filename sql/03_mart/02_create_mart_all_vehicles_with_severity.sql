@@ -1,7 +1,7 @@
 /*
 02_create_mart_all_vehicles_with_severity.sql
 
-Vehicle-level join layer for the predicting_premium_risk mart schema.
+Vehicle-level join layer for the profiling_premium_risk mart schema.
 
 Purpose:
 - Attach vehicle-level severity outcomes onto the full set of 

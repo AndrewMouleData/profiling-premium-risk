@@ -1,7 +1,9 @@
 /*
 05_create_raw_casualties_table.sql
 
-This script creates the raw.casualties table inside the predicting_premium_risk.raw schema. All columns are accounted for with exact matching to the source data/raw/casualties_master.csv.
+This script creates the raw.casualties table inside the predicting_premium_risk.raw 
+schema. All columns are accounted for with exact matching to the 
+source data/raw/casualties_master.csv.
 
 Design choices (raw layer):
 - Column names are pasted to match the CSV header exactly
