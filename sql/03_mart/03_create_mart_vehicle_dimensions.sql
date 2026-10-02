@@ -1,7 +1,7 @@
 /*
 03_create_mart_vehicle_dimensions.sql
 
-Dimension prep layer for the profiling_premium_risk mart schema.
+Dimension prep layer for the vehicle_risk_profiling mart schema.
 
 Purpose:
 - Enrich mart.all_vehicles_with_severity_2015_2024 with analysis-ready dimensions.
@@ -19,8 +19,9 @@ Design choices:
   labels and derived bands at this stage to preserve traceability and allow 
   future refinement before final aggregation.
 - Engine capacity banding handling: bands are designed in accordance with dataset 
-  distribution. Certain propulsion types (electric, fuel-cell, etc.) are handled 
-  with N/A, while NULL and negative coded values are treated as Unknown.
+  distribution. Fully electric and fuel-cell propulsion types are handled with N/A,
+  while hybrid electric and electric diesel vehicles retain their recorded engine
+  capacity bands. NULL and negative coded values are treated as Unknown.
 - Explicit unknown handling: NULL values and undefined codes (e.g., -1) are grouped 
   into labelled categories so they remain visible and auditable in downstream analysis.
 */
@@ -83,16 +84,16 @@ SELECT
     propulsion_label,
     engine_capacity_cc,
     CASE
-      WHEN propulsion_code IN (3, 8, 11, 12)        THEN 'N/A'
-      WHEN engine_capacity_cc IS NULL               THEN 'Unknown'
-      WHEN engine_capacity_cc < 0                   THEN 'Unknown'
-      WHEN engine_capacity_cc BETWEEN 0 AND 499     THEN '0–499 cc'
-      WHEN engine_capacity_cc BETWEEN 500 AND 999   THEN '500–999 cc'
+      WHEN propulsion_code IN (3, 11)              THEN 'N/A'
+      WHEN engine_capacity_cc IS NULL              THEN 'Unknown'
+      WHEN engine_capacity_cc < 0                  THEN 'Unknown'
+      WHEN engine_capacity_cc BETWEEN 0 AND 499    THEN '0–499 cc'
+      WHEN engine_capacity_cc BETWEEN 500 AND 999  THEN '500–999 cc'
       WHEN engine_capacity_cc BETWEEN 1000 AND 1499 THEN '1000–1499 cc'
       WHEN engine_capacity_cc BETWEEN 1500 AND 1999 THEN '1500–1999 cc'
       WHEN engine_capacity_cc BETWEEN 2000 AND 2999 THEN '2000–2999 cc'
-      WHEN engine_capacity_cc >= 3000               THEN '3000+ cc'
-      ELSE                                               'Unknown'
+      WHEN engine_capacity_cc >= 3000              THEN '3000+ cc'
+      ELSE                                              'Unknown'
     END AS engine_capacity_band,
     age_of_vehicle,
     CASE
