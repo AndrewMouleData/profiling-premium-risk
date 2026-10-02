@@ -1,7 +1,7 @@
 /*
 01_create_mart_vehicle_level_severity.sql
 
-Vehicle-level severity aggregation layer for the profiling_premium_risk mart schema.
+Vehicle-level severity aggregation layer for the vehicle_risk_profiling mart schema.
 
 Purpose:
 - Aggregate casualties (severity & count) to the vehicle involvement grain: 
@@ -19,10 +19,17 @@ Design choices:
 - Vehicle-first aggregation: severity is aggregated at the vehicle 
   involvement level before any vehicular profile grouping to preserve 
   granularity at this moment.
-- Heuristic weighting: severity is represented using three fixed 
-  constants aligned to the ordinal injury categories in STATS19. This enables 
-  construction of an interpretable weighted injury-burden measure for downstream 
-  vehicle-profile contribution analysis.
+- Casualty attribution: each casualty is attributed to the vehicle recorded on
+  its casualty row (for pedestrians, the vehicle recorded as involved). A vehicle's
+  own occupants therefore count towards that vehicle's severity, and occupants of
+  other vehicles in the same collision count towards those vehicles. STATS19 assigns
+  no fault, so severity reflects injury burden in collisions involving the vehicle,
+  not harm caused to third parties.
+- Heuristic weighting: severity uses three fixed constants (slight = 1, serious = 15,
+  fatal = 60) aligned to the ordinal injury categories in STATS19. The weights are
+  illustrative rather than empirically derived and have not been sensitivity-tested.
+  They produce an interpretable weighted injury-burden index, not a cost or payout
+  estimate.
 */
 
 DROP TABLE IF EXISTS mart.vehicle_level_severity_2015_2024;

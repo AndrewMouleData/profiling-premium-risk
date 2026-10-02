@@ -1,6 +1,6 @@
 /*
-Project Title: Profiling Premium Risk - UK STATS19 Analytics
-Database Name: profiling_premium_risk
+Project Title: Vehicle Risk Profiling with UK STATS19: A Motor Insurance Feasibility Study
+Database Name: vehicle_risk_profiling
 
 Purpose:
 - This script creates the core schemas used in the project. It assumes the 
@@ -15,8 +15,9 @@ Schemas:
   collisions_master.csv, vehicles_master.csv, casualties_master.csv.
 - stg: Tables that are cleaned, explicitly type-cast, and scoped to the project's
   analytical time window (the intermediate layer).
-- mart : Analysis-ready vehicle-profile tables supporting insurance-relevant 
-  collision involvement, weighted injury-burden contribution, and risk-review analysis.
+- mart: Analysis-ready vehicle-profile tables summarising collision involvement
+  and weighted injury burden by vehicle characteristics (type, propulsion,
+  engine capacity band, vehicle age band).
 */
 
 CREATE SCHEMA IF NOT EXISTS raw;  -- Raw source layer

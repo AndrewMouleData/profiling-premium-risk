@@ -1,13 +1,13 @@
 /*
 03_create_raw_vehicles_table.sql
 
-This script creates the raw.vehicles table inside the profiling_premium_risk.raw
+This script creates the raw.vehicles table inside the vehicle_risk_profiling.raw
 schema. All columns are accounted for with exact matching to the source 
 data/raw/vehicles_master.csv.
 
 Design choices (raw layer):
 - Column names are pasted to match the CSV header exactly
-- All columns are type TEXT to accomodate unexpected values
+- All columns are type TEXT to accommodate unexpected values
 - No constraints are enforced at this stage
 
 Typing, cleaning, and time scoping (2015–2024) will happen in the stg layer.

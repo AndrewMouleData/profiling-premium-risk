@@ -1,7 +1,7 @@
 /*
 01_stg_collisions_2015_2024.sql
 
-Staging layer for collision-level records within the profiling_premium_risk database.
+Staging layer for collision-level records within the vehicle_risk_profiling database.
 
 Purpose:
 - Time-scope data (2015-2024) to establish the master temporal filter for downstream joins.

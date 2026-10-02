@@ -1,7 +1,7 @@
 /*
 05_mart_quality_checks.sql
 
-Quality assurance checks for the profiling_premium_risk mart schema.
+Quality assurance checks for the vehicle_risk_profiling mart schema.
 
 Run each check individually.
 
@@ -27,6 +27,8 @@ Design choices:
   total casualty rows in staging, confirming no loss or double-counting.
 - Severity domain validation: confirms only expected STATS19 severity codes 
   (1, 2, 3) are present; any unexpected values indicate upstream anomalies in the data.
+- Final-table reconciliation: vehicle and casualty totals in the final profile table are
+  reconciled to staging, and frequency shares are confirmed to sum to 1.
 */
 
 -- Check 1: Primary key grain uniqueness
@@ -130,3 +132,30 @@ GROUP BY
         ELSE 'Unexpected'
     END
 ORDER BY casualty_severity;
+
+-- Check 6: Final profile table reconciles to staging
+-- Expected result: vehicles_match and casualties_match should PASS; share_sum should equal 1.
+
+WITH totals AS (
+    SELECT
+        (SELECT SUM(vehicle_count)
+         FROM mart.vehicle_risk_profiles_2015_2024) AS profile_vehicles,
+        (SELECT COUNT(*)
+         FROM stg.vehicles_2015_2024) AS stg_vehicles,
+        (SELECT SUM(slight_count + serious_count + fatal_count)
+         FROM mart.vehicle_risk_profiles_2015_2024) AS profile_casualties,
+        (SELECT COUNT(*)
+         FROM stg.casualties_2015_2024) AS stg_casualties,
+        (SELECT ROUND(SUM(frequency_share), 6)
+         FROM mart.vehicle_risk_profiles_2015_2024) AS share_sum
+)
+
+SELECT
+    profile_vehicles,
+    stg_vehicles,
+    CASE WHEN profile_vehicles = stg_vehicles THEN 'PASS' ELSE 'FAIL' END AS vehicles_match,
+    profile_casualties,
+    stg_casualties,
+    CASE WHEN profile_casualties = stg_casualties THEN 'PASS' ELSE 'FAIL' END AS casualties_match,
+    share_sum
+FROM totals;

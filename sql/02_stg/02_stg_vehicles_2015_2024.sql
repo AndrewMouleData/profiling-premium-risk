@@ -1,7 +1,7 @@
 /*
 02_stg_vehicles_2015_2024.sql
 
-Staging layer for vehicle-level records within the profiling_premium_risk database.
+Staging layer for vehicle-level records within the vehicle_risk_profiling database.
 
 Purpose:
 - Time-scope data (2015-2024) via semi-join with stg.collisions.

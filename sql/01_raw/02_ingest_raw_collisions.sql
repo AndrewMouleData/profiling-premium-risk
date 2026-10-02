@@ -29,12 +29,12 @@ Design choices (raw layer):
 
 --------------------------------------------------------------------------------
 Shell commands (adjust for your file path, PostgreSQL details, and shell syntax):
-> cd "C:\Users\YourName\Datasets\Profiling-Premium-Risk"
-> psql -U postgres -d profiling_premium_risk -f sql/01_raw/02_ingest_raw_collisions.sql
+> cd "C:\Users\YourName\Datasets\vehicle-risk-profiling"
+> psql -U postgres -d vehicle_risk_profiling -f sql/01_raw/02_ingest_raw_collisions.sql
 
 Alternative if psql is not in PATH, or you prefer not to add it (using PowerShell syntax):
-> cd "C:\Users\YourName\Datasets\Profiling-Premium-Risk"
-> & "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d profiling_premium_risk -f "sql/01_raw/02_ingest_raw_collisions.sql"
+> cd "C:\Users\YourName\Datasets\vehicle-risk-profiling"
+> & "C:\Program Files\PostgreSQL\18\bin\psql.exe" -U postgres -d vehicle_risk_profiling -f "sql/01_raw/02_ingest_raw_collisions.sql"
 --------------------------------------------------------------------------------
 */
 

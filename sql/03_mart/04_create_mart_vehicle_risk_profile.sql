@@ -1,7 +1,7 @@
 /*
-04_create_mart_vehicle_risk_profiles.sql
+04_create_mart_vehicle_risk_profile.sql
 
-Final aggregation layer for the profiling_premium_risk mart schema.
+Final aggregation layer for the vehicle_risk_profiling mart schema.
 
 Purpose:
 - Produce the final mart output table to be consumed by R.
@@ -10,7 +10,8 @@ Purpose:
 - Calculate the project's three core contribution metrics:
   1. avg_weighted_severity_per_vehicle: mean weighted injury burden per collision involvement.
   2. frequency_share: each profile's share of all collision-involved vehicles (2015-2024).
-  3. risk_proxy_score: each profile's normalised contribution to total weighted injury burden.
+  3. risk_proxy_score: each profile's contribution to the overall mean weighted
+     injury burden per collision-involved vehicle.
 
 Design choices:
 - Business grain is set here: GROUP BY collapses vehicle-level rows into one row per 
@@ -24,9 +25,10 @@ Design choices:
 - Frequency denominator: total_vehicles is the global count of all collision-involved
   vehicles across all profiles, derived from the profiles_aggregated CTE to avoid
   re-scanning the base table.
-- Risk proxy score: this is a normalised contribution measure designed for 
-  interpretation of a profile's contribution to the overall weighted 
-  injury-burden landscape within collision-involved vehicles.
+- Risk proxy score: a volume-weighted contribution measure. It ranks profiles by
+  how much they add to the overall mean weighted injury burden, so frequent profiles
+  score highly even when per-vehicle severity is modest. Frequency and average
+  severity should be read separately (see the frequency-severity quadrant figure).
   Algebraically: 
   frequency_share * avg_weighted_severity_per_vehicle
   = (vehicle_count / total_vehicles) * (weighted_severity_total / vehicle_count)

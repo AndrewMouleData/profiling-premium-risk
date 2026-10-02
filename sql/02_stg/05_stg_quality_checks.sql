@@ -1,7 +1,7 @@
 /*
 05_stg_quality_checks.sql
 
-Quality assurance checks for the profiling_premium_risk staging schema.
+Quality assurance checks for the vehicle_risk_profiling staging schema.
 
 Run each check individually.
 

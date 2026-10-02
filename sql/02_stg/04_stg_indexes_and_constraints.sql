@@ -1,7 +1,7 @@
 /*
 04_stg_indexes_and_constraints.sql
 
-Structural integrity and performance layer for the profiling_premium_risk staging schema.
+Structural integrity and performance layer for the vehicle_risk_profiling staging schema.
 
 Purpose:
 - Enforce primary keys to guarantee relational uniqueness and table grain.
